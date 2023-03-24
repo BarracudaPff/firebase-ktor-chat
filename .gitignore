@@ -92,3 +92,8 @@ gradle-app.setting
 
 /.idea/
 **/yarn.lock
+
+**/firebase-service.json
+
+simple-chat-e7fe3-default-rtdb.europe-west1.firebasedatabase.app
+AIzaSyBmGdmgSutNhQLdB_JvGoTOCTwckphHT30
