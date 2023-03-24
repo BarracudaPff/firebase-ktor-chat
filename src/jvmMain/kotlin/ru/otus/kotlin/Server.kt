@@ -19,10 +19,6 @@ import io.ktor.websocket.*
 import kotlinx.html.*
 import org.slf4j.event.Level
 import ru.otus.kotlin.firebase.*
-import ru.otus.kotlin.models.AuthRequest
-import ru.otus.kotlin.models.User
-import ru.otus.kotlin.services.GoogleApiService
-import ru.otus.kotlin.ws.wsChat
 
 fun HTML.index() {
     head {
@@ -62,14 +58,6 @@ fun Application.module() {
     }
     // Required for chat
     install(WebSockets)
-    // Handle verification and getting user by auth token via firebase
-    install(Authentication) {
-        firebase {
-            validate {
-                FirebaseService.userById(it.uid)
-            }
-        }
-    }
     // Simple logging for requests/responses
     install(CallLogging) {
         level = Level.INFO
@@ -77,41 +65,9 @@ fun Application.module() {
 
     routing {
         route("api/v1") {
-            // Route to sign up user (REST)
-            route("user/auth") {
-                post("signup") {
-                    val req = call.receive<AuthRequest>()
-
-                    val response = FirebaseService.createUser(req)
-                    call.respond(response)
-                }
-                post("login") {
-                    val req = call.receive<AuthRequest>()
-
-                    val response = GoogleApiService.getInstance().signInWithPassword(req)
-                    call.respond(response)
-                }
-            }
-            post("user/auth") {
-                val req = call.receive<AuthRequest>()
-
-                val response = FirebaseService.createUser(req)
-                call.respond(response)
-            }
-
             // Chat is available only for authorized users
-            authenticate(FIREBASE_AUTH) {
-                // Route to check if user is verified (REST)
-                get("/auth-check") {
-                    val user = call.principal<User>() ?: return@get call.respond(HttpStatusCode.Unauthorized)
-                    call.respond("User is authenticated: $user")
-                }
-
-                // Entrypoint for chat
-                webSocket("ws/chat") {
-                    val user = call.principal<User>() ?: return@webSocket close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "Closed by request"))
-                    wsChat(user)
-                }
+            webSocket("ws/chat") {
+                // TODO: chat here
             }
         }
     }

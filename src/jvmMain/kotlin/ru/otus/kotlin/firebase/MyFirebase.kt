@@ -5,7 +5,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
 import io.ktor.server.application.*
 import io.ktor.server.application.hooks.*
-import ru.otus.kotlin.services.GoogleApiService
 import java.io.InputStream
 
 val MyFirebase = createApplicationPlugin(name = "MyFirebase") {
@@ -23,9 +22,9 @@ val MyFirebase = createApplicationPlugin(name = "MyFirebase") {
             .build()
 
 
-        application.environment.config.propertyOrNull("ktor.firebase.web_key")?.let {
-            GoogleApiService.init(it.getString())
-        }
+//        application.environment.config.propertyOrNull("ktor.firebase.web_key")?.let {
+//            GoogleApiService.init(it.getString())
+//        }
 
         FirebaseApp.initializeApp(options)
     }
